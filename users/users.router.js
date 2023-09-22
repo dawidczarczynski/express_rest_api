@@ -1,14 +1,15 @@
 const { Router } = require('express');
 const { userValidationMiddleware } = require('./user.validators');
-const { getAllUsersHandler, getSingleUserHandler, createUserHandler, replaceUserHandler, deleteUserHandler } = require('./users.controller');
+const usersController = require('./users.controller');
 
 const usersRouter = Router();
 
-usersRouter.get('/', getAllUsersHandler);
-usersRouter.get('/:id', getSingleUserHandler);
-usersRouter.post('/', userValidationMiddleware, createUserHandler);
-usersRouter.put('/:id', userValidationMiddleware, replaceUserHandler);
-usersRouter.delete('/:id', deleteUserHandler);
+usersRouter.get('/', usersController.getAllUsersHandler);
+usersRouter.get('/:id', usersController.getSingleUserHandler);
+usersRouter.post('/', userValidationMiddleware, usersController.createUserHandler);
+usersRouter.put('/:id', userValidationMiddleware, usersController.replaceUserHandler);
+usersRouter.delete('/:id', usersController.deleteUserHandler);
+usersRouter.patch('/:id/active', usersController.updateUserStatus);
 
 module.exports = {
     usersRouter,

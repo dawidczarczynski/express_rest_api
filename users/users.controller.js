@@ -1,16 +1,16 @@
-const { getAllUsers, getUserById, saveUser, replaceUser, removeUser } = require('./users.service');
+const { getAllUsers, getUserById, saveUser, replaceUser: updateUser, removeUser } = require('./users.service');
 
 
-const getAllUsersHandler = (req, res) => {
-    const users = getAllUsers();
+const getAllUsersHandler = async (req, res) => {
+    const users = await getAllUsers();
     
     return res
         .status(200)
         .send({ users });
 };
 
-const getSingleUserHandler = (req, res) => {
-    const user = getUserById(req.params.id);
+const getSingleUserHandler = async (req, res) => {
+    const user = await getUserById(req.params.id);
 
     if (!user) {
         return res
@@ -23,27 +23,36 @@ const getSingleUserHandler = (req, res) => {
         .send({ user });
 };
 
-const createUserHandler = (req, res) => {
-    const user = saveUser({ name: req.body.name });
+const createUserHandler = async (req, res) => {
+    const user = await saveUser(req.body);
  
     return res
         .status(201)
         .send({ user });
 };
 
-const replaceUserHandler = (req, res) => {
-    replaceUser(req.params.id,req.body);
+const replaceUserHandler = async (req, res) => {
+    const updatedUser = await updateUser(req.params.id,req.body);
     
+    return res
+        .status(200)
+        .send({ user: updatedUser });
+};
+
+const deleteUserHandler = async (req, res) => {
+    await removeUser(req.params.id);
     return res
         .status(204)
         .send();
 };
 
-const deleteUserHandler = (req, res) => {
-    removeUser(req.params.id);
+const updateUserStatus = async (req, res) => {
+    const { active } = req.body;
+    const updatedUser = await updateUser(req.params.id, { active });
+
     return res
-        .status(204)
-        .send();
+        .status(200)
+        .send(updatedUser);
 };
 
 module.exports = {
@@ -52,4 +61,5 @@ module.exports = {
     createUserHandler,
     replaceUserHandler,
     deleteUserHandler,
+    updateUserStatus,
 };

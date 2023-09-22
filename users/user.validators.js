@@ -1,15 +1,18 @@
 const Joi = require('joi');
 
 const userSchema = Joi.object({
-    id: Joi.string().alphanum().optional(),
-    name: Joi.string().required(),
+    firstname: Joi.string().required(),
+    lastname: Joi.string().required(),
+    age: Joi.number().min(1).required(),
+    email: Joi.string().required(),
+    active: Joi.boolean().optional(),
 });
 
 const userValidationMiddleware = (req, res, next) => {
     const newUser = req.body;
 
     const { error } = userSchema.validate(newUser);
-
+    
     if (error) {
         return res
             .status(400)
@@ -18,7 +21,6 @@ const userValidationMiddleware = (req, res, next) => {
     
     return next();
 };
-
 
 module.exports = {
     userValidationMiddleware,

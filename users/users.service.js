@@ -1,33 +1,55 @@
-const { nanoid } = require('nanoid');
+const { User } = require("./user.model");
 
-let users = [];
+const getAllUsers = async () => {
+    try {
+        return await User.find();
+    } catch (e) {
+        // Przykładowa obsługa błędu
+        console.error(e);
+        return [];
+    }
 
-const getAllUsers = () => {
-    return users;
 };
 
-const getUserById = (id) => {
-    return users.find((user) => user.id === id);
+const getUserById = async (id) => {
+    try {
+        return await User.findById(id);
+    } catch (e) {
+        // Przykładowa obsługa błędu
+        return null;
+    }
 };
 
-const saveUser = (user) => {
-    const newUser = { ...user, id: nanoid() };
-    users.push(newUser);
+const saveUser = async (user) => {
+    try {
+        const newUser = new User(user);
+        const saveResult = await newUser.save();
 
-    return newUser;
+        return saveResult;
+    } catch (e) {
+        // Przykładowa obsługa błędu
+        console.error(e.message);
+        return null;
+    }
 };
 
-const replaceUser = (id, modifiedUser) => {
-    users = users.map((user) => {
-        if (user.id === id) {
-            return modifiedUser;
-        }
-        return user;
-    });
+const replaceUser = async (id, modifiedUser) => {
+    try {
+        return await User.findByIdAndUpdate(id, modifiedUser, { new: true });
+    } catch (e) {
+        // Przykładowa obsługa błędu
+        console.error(e.message);
+        return null;
+    }
 };
 
-const removeUser = (id) => {
-    users = users.filter((user) => user.id !== id);
+const removeUser = async (id) => {
+    try {
+        await User.findByIdAndDelete(id);
+    } catch (e) {
+        // Przykładowa obsługa błędu
+        console.error(e);
+    }
 }
 
 module.exports = {
